@@ -1,0 +1,198 @@
+Task -2 : Library Management Task
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+// Book class representing a book in the library
+class Book {
+    private String bookId;
+    private String title;
+    private String author;
+    private String genre;
+    private boolean available;
+
+    public Book(String bookId, String title, String author, String genre) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.available = true; // Initially available
+    }
+
+    // Getters and setters
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+
+// Patron class representing a patron in the library
+class Patron {
+    private String patronId;
+    private String name;
+    private String contactInfo;
+    private List<Book> borrowedBooks;
+
+    public Patron(String patronId, String name, String contactInfo) {
+        this.patronId = patronId;
+        this.name = name;
+        this.contactInfo = contactInfo;
+        this.borrowedBooks = new ArrayList<>();
+    }
+
+    // Getters and setters
+    public String getPatronId() {
+        return patronId;
+    }
+
+    public void setPatronId(String patronId) {
+        this.patronId = patronId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(String contactInfo) {
+        this.contactInfo = contactInfo;
+    }
+
+    public List<Book> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
+    public void setBorrowedBooks(List<Book> borrowedBooks) {
+        this.borrowedBooks = borrowedBooks;
+    }
+}
+
+// Library class representing the library system
+public class Library {
+    private Map<String, Book> books;
+    private Map<String, Patron> patrons;
+
+    public Library() {
+        this.books = new HashMap<>();
+        this.patrons = new HashMap<>();
+    }
+
+    // Method to add a book to the library
+    public void addBook(Book book) {
+        books.put(book.getBookId(), book);
+    }
+
+    // Method to add a patron to the library
+    public void addPatron(Patron patron) {
+        patrons.put(patron.getPatronId(), patron);
+    }
+
+    // Method for a patron to borrow a book
+    public void borrowBook(String patronId, String bookId) {
+        Patron patron = patrons.get(patronId);
+        Book book = books.get(bookId);
+
+        if (patron != null && book != null && book.isAvailable()) {
+            patron.getBorrowedBooks().add(book);
+            book.setAvailable(false);
+            System.out.println("Book '" + book.getTitle() + "' borrowed by " + patron.getName());
+        } else {
+            System.out.println("Book cannot be borrowed. Patron or book not found, or book is not available.");
+        }
+    }
+
+    // Method for a patron to return a book
+    public void returnBook(String patronId, String bookId) {
+        Patron patron = patrons.get(patronId);
+        Book book = books.get(bookId);
+
+        if (patron != null && book != null && !book.isAvailable()) {
+            patron.getBorrowedBooks().remove(book);
+            book.setAvailable(true);
+            System.out.println("Book '" + book.getTitle() + "' returned by " + patron.getName());
+        } else {
+            System.out.println("Book cannot be returned. Patron or book not found, or book is already available.");
+        }
+    }
+
+    // Method to display all books in the library
+    public void displayBooks() {
+        System.out.println("Books in the library:");
+        for (Book book : books.values()) {
+            System.out.println(book.getBookId() + ": " + book.getTitle() + " by " + book.getAuthor() + " (" + book.getGenre() + ")");
+            System.out.println("   Available: " + (book.isAvailable() ? "Yes" : "No"));
+        }
+    }
+
+    public static void main(String[] args) {
+        // Create a library instance
+        Library library = new Library();
+
+        // Add books to the library
+        Book book1 = new Book("B001", "Java Programming", "John Doe", "Programming");
+        Book book2 = new Book("B002", "Data Structures", "Jane Smith", "Computer Science");
+        library.addBook(book1);
+        library.addBook(book2);
+
+        // Add patrons to the library
+        Patron patron1 = new Patron("P001", "Alice Brown", "alice@example.com");
+        Patron patron2 = new Patron("P002", "Bob Green", "bob@example.com");
+        library.addPatron(patron1);
+        library.addPatron(patron2);
+
+        // Display all books in the library
+        library.displayBooks();
+
+        // Simulate book borrowing and returning
+        library.borrowBook("P001", "B001");
+        library.borrowBook("P002", "B002");
+        library.returnBook("P001", "B001");
+
+        // Display all books in the library again
+        library.displayBooks();
+    }
+}
